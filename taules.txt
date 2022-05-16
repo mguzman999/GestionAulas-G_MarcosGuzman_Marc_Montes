@@ -1,0 +1,10 @@
+t_01;interior;10;si;7;si;si;
+t_02;exterior;20;no;20;no;si;
+t_03;interior;6;si;7;si;no;
+t_04;exterior;12;no;12;no;si;
+t_05;interior;6;si;7;si;no;
+t_06;exterior;3;no;3;no;no;
+t_07;interior;15;si;7;si;si;
+t_08;exterior;12;no;12;no;si;
+t_09;interior;19;si;7;si;no;
+t_10;exterior;5;no;5;si;si;
