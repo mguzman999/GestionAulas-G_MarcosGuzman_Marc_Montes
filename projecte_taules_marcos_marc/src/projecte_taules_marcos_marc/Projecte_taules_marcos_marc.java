@@ -59,20 +59,22 @@ public class Projecte_taules_marcos_marc {
 
             switch (opcion) {
                 case 1:
+                    // Pedimos los datos de login del usuario
                     System.out.print("Introduzca su usuario: ");
                     String usuario = sc.next();
                     System.out.print("Introduzca su contraseña: ");
                     String passwd = sc.next();
-
+                    
+                    // Guardamos en una variable aux lo que devuelve la funcion de login
                     aux = loginUsuarios(archivoUsers, ficheroMesas, usuario, passwd);
-                    if (!aux) {
+                    if (!aux) { // si es falso se descuentan intentos
                         intentos--;
                         System.out.println("INTENTO FALLIDO DE LOGEO EN EL SISTEMA, TE QUEDAN: " + intentos + " INTENTOS");
-                        if (intentos == 0) {
+                        if (intentos == 0) { // si los intentos llegan a 0 se cambiar el valor de la variable salir a true y se sale del bucle do while padre terminando el programa
                             System.out.println("INTENTOS VENCIDOS, LLAMANDO A SEGURIDAD...");
                             salir = true;
                         }
-                    } else{
+                    } else{ // si el usuario termina iniciando sesion correctamente al salir de su sesion se le reinician los intentos otra vez.
                         intentos = 3;
                     }
                     break;
@@ -144,11 +146,11 @@ public class Projecte_taules_marcos_marc {
 
     }
 
-    // Funcion para crear y escribir dentro del fichero nuevo, si es el caso que no existe, lo cargaremos con mesas precargadas, le pasamos el fichero
+    // Funcion para crear y escribir dentro del fichero nuevo, si es el caso que no existe, lo cargaremos con una linea en blanco
     private static void crearFicheroMesas(File ficheroMesas) {
         try {
             FileWriter writer = new FileWriter(ficheroMesas);
-
+            //Se crea el fichero de mesas con una linea vacia
             writer.write("");
 
             writer.close();
@@ -163,8 +165,8 @@ public class Projecte_taules_marcos_marc {
             // Codificación ISO-8859-1 (ANSI) o UTF-8 dependiendo de cómo esté creado el fichero de texto
             Scanner lectorFichero = new Scanner(ficheroMesas, "ISO-8859-1");
             System.out.println("");
+            // mientras el fichero contenga una linea siguiente este imprimira el contenido de esta linea
             while (lectorFichero.hasNext()) {
-
                 System.out.println(lectorFichero.nextLine());
             }
 
@@ -177,8 +179,9 @@ public class Projecte_taules_marcos_marc {
     // Funcion para añadir una nueva linea al fichero (al final del archivo), le pasamos el objeto fichero
     private static void darAltaMesa(File ficheroMesas) {
         Scanner sc = new Scanner(System.in);
-
-        //pedimos los datos al usuario
+        boolean opc = false;
+        
+        //pedimos los datos de la mesa al usuario
         System.out.print("INTRODUCE EL ID DE LA MESA: ");
         String idMesa = sc.next();
 
@@ -188,17 +191,43 @@ public class Projecte_taules_marcos_marc {
         System.out.print("INTRODUCE LA CAPACIDAD MAXIMA DE PERSONAS DE LA MESA: ");
         String cantMesa = sc.next();
 
-        System.out.print("INTRODUCE (SI - NO) SI HAY SILLAS PARA LOS PEQUES: ");
-        String peqMesa = sc.next();
+        String peqMesa;
+        do { // Realizamos pruebas de errores que solo se pueda introducir si o no
+            System.out.print("INTRODUCE (SI - NO) SI HAY SILLAS PARA LOS PEQUES: ");
+            peqMesa = sc.next();
+            if (peqMesa.equalsIgnoreCase("si") || peqMesa.equalsIgnoreCase("no")) {
+                opc = true;
+            } else {
+                System.out.println("TEXTO INCORRECTO INTRODUCE (SI) O (NO)");
+            }
+        } while (!opc);
 
         System.out.print("INTRODUCE EL NUMERO DE SILLAS DE ADULTOS DE LAS MESA: ");
         String sillMesa = sc.next();
 
-        System.out.print("INTRODUCE (SI - NO) SI HAY VENTILADOR EN LA MESA: ");
-        String ventMesa = sc.next();
+        opc = false;
+        String ventMesa;
+        do { // Realizamos pruebas de errores que solo se pueda introducir si o no
+            System.out.print("INTRODUCE (SI - NO) SI HAY VENTILADOR EN LA MESA: ");
+            ventMesa = sc.next();
+            if (ventMesa.equalsIgnoreCase("si") || ventMesa.equalsIgnoreCase("no")) {
+                opc = true;
+            } else {
+                System.out.println("TEXTO INCORRECTO INTRODUCE (SI) O (NO)");
+            }
+        } while (!opc);
 
-        System.out.print("INTRODUCE (SI - NO) SI LA MESA ESTA EN EL JARDIN: ");
-        String jardMesa = sc.next();
+        opc = false;
+        String jardMesa;
+        do { // Realizamos pruebas de errores que solo se pueda introducir si o no
+            System.out.print("INTRODUCE (SI - NO) SI LA MESA ESTA EN EL JARDIN: ");
+            jardMesa = sc.next();
+            if (jardMesa.equalsIgnoreCase("si") || jardMesa.equalsIgnoreCase("no")) {
+                opc = true;
+            } else {
+                System.out.println("TEXTO INCORRECTO INTRODUCE (SI) O (NO)");
+            }
+        } while (!opc);
 
         try {
 
@@ -223,7 +252,7 @@ public class Projecte_taules_marcos_marc {
         // Abrimos el fichero de texto para leerlo en memoria
         try {
             Scanner lectorFichero = new Scanner(ficheroMesas);
-
+            // mientras el fichero que le pasamos tenga lineas siguientes se añaden al arraylist de lineas
             while (lectorFichero.hasNext()) {
                 lineas.add(lectorFichero.nextLine());
             }
@@ -233,7 +262,6 @@ public class Projecte_taules_marcos_marc {
             System.out.println("Ha ocurrido un error al abrir/leer el fichero");
         }
 
-        // Abrimos el fichero de texto para sobreescribirlo
         // Pediremos los datos de la mesa que queremos modificar
         System.out.print("INTRODUCE EL ID DE LA MESA QUE QUIERES MODIFICAR: ");
         String idMesa = sc.next();
@@ -246,7 +274,7 @@ public class Projecte_taules_marcos_marc {
             if (parts[0].equalsIgnoreCase(idMesa)){
                 boolean salir = false;
                 int opcion;
-                do {
+                do { // mostramos las opciones de la mesa que el usuario puede modificar
                     System.out.println("INTRODUCE EL CAMPO QUE QUIERES MODIFICAR DE LA MESA: ");
                     System.out.println("1 - ID DE LA MESA (NO DISPONIBLE POR EL MOMENTO - SOLO ADMIN)");
                     System.out.println("2 - DESCRIPCION DE LA MESA");
@@ -259,7 +287,7 @@ public class Projecte_taules_marcos_marc {
                     System.out.print("SELECCIONA UNA OPCION: ");
                     opcion = sc.nextInt();
 
-                    switch (opcion) {
+                    switch (opcion) { // segun la opcion que escoga el usuario se modificara una cosa u otra
                         case 1:
                             System.out.println("NO DISPONIBLE POR EL MOMENTO CONTACTA CON EL ADMINISTRADOR");
                             break;
@@ -276,7 +304,7 @@ public class Projecte_taules_marcos_marc {
                         case 4:
                             boolean opc = false;
                             String sillasPeques;
-                            do {
+                            do { // realizamos pruebas de errores para que el usuario no escriba algo que no debe
                                 System.out.print("EXISTEN SILLAS ADAPTADAS PARA LOS NIÑOS PEQUEÑOS EN LA MESA? ");
                                 sillasPeques = sc.next();
                                 if (sillasPeques.equalsIgnoreCase("si") || sillasPeques.equalsIgnoreCase("no")) {
@@ -295,7 +323,7 @@ public class Projecte_taules_marcos_marc {
                         case 6:
                             opc = false;
                             String vent;
-                            do {
+                            do { // realizamos pruebas de errores para que el usuario no escriba algo que no debe
                                 System.out.print("EXISTEN VENTILADORES EN LA MESA? ");
                                 vent = sc.next();
                                 if (vent.equalsIgnoreCase("si") || vent.equalsIgnoreCase("no")) {
@@ -309,7 +337,7 @@ public class Projecte_taules_marcos_marc {
                         case 7:
                             opc = false;
                             String jardin;
-                            do {
+                            do { // realizamos pruebas de errores para que el usuario no escriba algo que no debe
                                 System.out.print("INTRODUCE LA UBICACION DE LA MESA: ");
                                 jardin = sc.next();
                                 if (jardin.equalsIgnoreCase("INTERIOR") || jardin.equalsIgnoreCase("EXTERIOR")) {
@@ -352,6 +380,7 @@ public class Projecte_taules_marcos_marc {
                     writer.write(fraseformat);
                     System.out.println("LA MESA HA SIDO MODIFICADA \n");
 
+                    // Mostramos como seran los nuevos datos de la mesa
                     System.out.println("");
                     System.out.println("EL ID DE LA MESA ES: " + parts[0]);
                     System.out.println("LA DESCRIPCION DE LA MESA ES: " + parts[1]);
@@ -386,7 +415,7 @@ public class Projecte_taules_marcos_marc {
         // Abrimos el fichero de texto para leerlo en memoria
         //solicitamos el id de la mesa al usuario
         System.out.print("INTRODUCE EL ID DE LA MESA QUE QUIERES ELIMINAR: ");
-        String idmesa = sc.next();
+        String idMesa = sc.next();
         try {
             Scanner lectorFichero = new Scanner(ficheroMesas);
 
@@ -404,13 +433,14 @@ public class Projecte_taules_marcos_marc {
         try {
             FileWriter writer = new FileWriter(ficheroMesas);
 
+            // Realizamos un bucle for each para recorrer todo el arraylist de lineas
             for (String linea : lineas) {
 
                 String frase = linea;
                 String[] parts = frase.split(";");
 
                 //mietras no cumpla la condicion, escribiremos las lineas en el fichero
-                if (!parts[0].equalsIgnoreCase(idmesa)) {
+                if (!parts[0].equalsIgnoreCase(idMesa)) {
                     writer.write(linea + "\n");
 
                 }
@@ -430,7 +460,7 @@ public class Projecte_taules_marcos_marc {
         boolean salir = false;
         int opcion;
 
-        do {
+        do { // realizamos un bucle do while para el menu del admin en el que el admin escogera una opcion de la funcion que quiera realizar
             System.out.println("\nBIENVENIDO AL MENU DEL ADMIN\n");
 
             System.out.println("***********************************\n");
@@ -444,7 +474,7 @@ public class Projecte_taules_marcos_marc {
             System.out.print("\nSelecciona una opcion: ");
             opcion = sc.nextInt();
 
-            switch (opcion) {
+            switch (opcion) { // dependiendo la opcion que escoga el administrador se llama a una funcion u otra
                 case 1:
                     altaUsuarios(archivoUsers);
                     break;
@@ -452,12 +482,12 @@ public class Projecte_taules_marcos_marc {
                     listarUsuarios(archivoUsers);
                     break;
                 case 3:
-                    modificarPasswdYRol();
+                    modificarPasswdYRol(archivoUsers);
                     break;
                 case 4:
-                    eliminarUsuario();
+                    eliminarUsuario(archivoUsers);
                     break;
-                case 5:
+                case 5: // si selecciona la opcion 5 que es salir, se saldra del menu del admin ya que cambia el valor del booleano salir a true
                     salir = true;
                     System.out.println("SALIENDO DEL MENU DE ADMIN...");
                     break;
@@ -468,7 +498,7 @@ public class Projecte_taules_marcos_marc {
         } while (opcion < 1 || opcion > 5 || !salir);
     }
 
-    // Funcion para crear y escribir dentro del fichero nuevo, si es el caso que no existe, lo cargaremos con mesas precargadas, le pasamos el fichero
+    // Funcion para crear y escribir dentro del fichero nuevo, si es el caso que no existe, lo cargaremos con usuarios precargadas
     private static void crearArchivoUsuarios(File archivoUsers) {
         //crearemos el nuevo archivo con datos ya precargados, el del admin y nosotros, LOS PROGRAMADORES!!!   :)
         try {
@@ -477,7 +507,7 @@ public class Projecte_taules_marcos_marc {
 
             // Creamos un nuevo array de Empleados
             // Por defecto todas las posiciones del array valen null
-            Empleados[] personal = new Empleados[3];
+            Empleados[] personal = new Empleados[100];
 
             // Creamos un nuevo empleado en la 1a posición del array
             personal[0] = new Empleados();
@@ -511,27 +541,63 @@ public class Projecte_taules_marcos_marc {
     private static void altaUsuarios(File archivoUsers) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Introduzca el nombre nuevo del usuario: ");
-        String newUser = sc.next();
-        System.out.print("Introduzca la contraseña del nuevo usuario: ");
-        String newPasswd = sc.next();
-        System.out.print("Introduzca el rol del nuevo usuario: ");
-        String newRol = sc.next();
+        boolean opc = false;
+        Empleados[] personal = new Empleados[100];
+        
+        // Cargamos el fichero de usuario en memoria (en un array de empleados)
+        try {
+            // A partir de aquí accederemos al fichero a leer mediante la variable fichero
+            ObjectInputStream fichero = new ObjectInputStream(new FileInputStream(archivoUsers));
 
+            // Y rellenamos con lo recuperado de leer el fichero mediante readObject
+            // readObject recibe todo un array de Empleados y por eso lo casteamos (Empleado[])
+            personal = (Empleados[]) fichero.readObject();
+
+            // Cerramos el fichero
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error al leer el fichero");
+        }
+
+        // Recorremos el bucle con un for each en el que averiguaremos la posicion final del ultimo empleado
+        int  i = 0;
+        for (Empleados empleado : personal){
+            if(empleado == null){
+                break;
+            } else{
+                i++;
+            }
+        }
+
+        // Guardamos el fichero con los anteriores y nuevos usuarios añadidos
         try {
             // A partir de aquí accederemos al fichero a guardar mediante la variable fichero
-            ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream(archivoUsers));
+            ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream(archivoUsers,true));
 
-            Empleados personal = new Empleados();
+            // Añadimos un nuevo usuario al array de personal, manteniendo los que habia anteriormente
+            System.out.print("Introduzca el nombre nuevo del usuario: ");
+            String newUser = sc.next();
+            System.out.print("Introduzca la contraseña del nuevo usuario: ");
+            String newPasswd = sc.next();
+            String newRol;
+            do {
+                System.out.print("Introduzca el rol del nuevo usuario: ");
+                newRol = sc.next();
+                if (newRol.equalsIgnoreCase("admin") || newRol.equalsIgnoreCase("cambrer")) {
+                    opc = true;
+                } else {
+                    System.out.println("EL ROL SOLO PUEDE SER ADMIN O CAMBRER");
+                }
+            } while (!opc);
 
-            // Creamos un nuevo empleado en la 1a posición del array
-            personal.usuario = newUser;
-            personal.contraseña = newPasswd;
-            personal.rol = newRol;
-
+            // Añadimos al array en la ultima posicion del empleado para no sobreescribirlo ni perder empleados anteriores
+            personal[i].usuario = newUser;
+            personal[i].contraseña = newPasswd;
+            personal[i].rol = newRol;
             // Con writeObject escribimos directamente el empleado
             fichero.writeObject(personal);
-
+            
             // Cerramos el fichero
             fichero.close();
 
@@ -562,6 +628,27 @@ public class Projecte_taules_marcos_marc {
                     System.out.println("--------------------");
                 }
             }
+            // Cerramos el fichero
+            fichero.close();
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error al leer el fichero");
+        }
+    }
+
+    // Funcion para modificar la contraseña y rol de un usuario especifico
+    private static void modificarPasswdYRol(File archivoUsers) {
+        Scanner sc = new Scanner(System.in);
+        
+        Empleados[] personal = null;
+        
+        // Cargamos el fichero de usuario en memoria (en un array de empleados)
+        try {
+            // A partir de aquí accederemos al fichero a leer mediante la variable fichero
+            ObjectInputStream fichero = new ObjectInputStream(new FileInputStream(archivoUsers));
+
+            // Y rellenamos con lo recuperado de leer el fichero mediante readObject
+            // readObject recibe todo un array de Empleados y por eso lo casteamos (Empleado[])
+            personal = (Empleados[]) fichero.readObject();
 
             // Cerramos el fichero
             fichero.close();
@@ -569,14 +656,112 @@ public class Projecte_taules_marcos_marc {
         } catch (Exception e) {
             System.out.println("Ha ocurrido un error al leer el fichero");
         }
-    }
+        
+        // ACTUALIZAMOS LOS DATOS DEL USUARIO
+        System.out.print("Introduce el nombre del empleado a actualizar: ");
+        String usuarioActualizar = sc.next();
+        
+        boolean salir = false;
+        int opcion;
+        
+        do { // dependiendo la opcion que escoga el usuario se puede modificar un cambio u otro
+            System.out.println("INTRODUCE QUE CAMPO QUIERES MODIFICAR DEL USUARIO: ");
+            System.out.println("1 - CONTRASEÑA");
+            System.out.println("2 - ROL");
+            System.out.print("SELECCIONA UNA OPCION: ");
+            opcion = sc.nextInt();
+            
+            switch(opcion){
+                case 1: // cambiamos la contraseña del usuario
+                    for (Empleados empleado : personal) {
+                        if (empleado != null && empleado.usuario.equalsIgnoreCase(usuarioActualizar)) {
+                            System.out.print("Introduzca la nueva contraseña: ");
+                            empleado.contraseña = sc.next();
+                        }
+                    }
+                    salir = true;
+                    break;
+                case 2: // cambiamos el rol del usuario
+                    for (Empleados empleado : personal) {
+                        if (empleado != null && empleado.usuario.equalsIgnoreCase(usuarioActualizar)) {
+                            System.out.print("Introduzca el nuevo rol: ");
+                            empleado.rol = sc.next();
+                        }
+                    }
+                    salir = true;
+                    break;
+                default:
+                    System.out.println("NUMERO INCORRECTO!");
+                    break;
+            }
+        } while (opcion < 1 && opcion > 2 && !salir);
+        
+        // GUARDAR FICHERO
+        try {
+            // A partir de aquí accederemos al fichero a guardar mediante la variable fichero
+            ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream(archivoUsers));
 
-    // Funcion para modificar la contraseña y rol de un usuario especifico
-    private static void modificarPasswdYRol() {
+            // Con writeObject escribimos directamente todo el array de Empleados
+            fichero.writeObject(personal);
+
+            // Cerramos el fichero
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error al guardar el fichero");
+        }
     }
 
     // Funcion para eliminar un usuario mediante lo que indique el usuario 
-    private static void eliminarUsuario() {
+    private static void eliminarUsuario(File archivoUsers) {
+        // LEER FICHERO EN MEMORIA
+        // Creamos la variable que contendrá el array de Empleados en memoria
+        Empleados[] personal = null;
+        try {
+            // A partir de aquí accederemos al fichero a leer mediante la variable fichero
+            ObjectInputStream fichero = new ObjectInputStream(new FileInputStream(archivoUsers));
+
+            // Y rellenamos con lo recuperado de leer el fichero mediante readObject
+            // readObject recibe todo un array de Empleados y por eso lo casteamos (Empleado[])
+            personal = (Empleados[]) fichero.readObject();
+
+            // Cerramos el fichero
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error al leer el fichero");
+        }
+        
+        // BORRAR DATOS
+        // Buscaremos por la clave primaria o varios campos, en este caso por Nombre y borraremos el registro
+        Scanner lector = new Scanner(System.in);
+        System.out.print("Introduce el nombre del empleado a despedir: ");
+        String nombreBorrar = lector.nextLine();
+
+        for (Empleados empleado : personal) {
+            if (empleado != null && empleado.usuario.equalsIgnoreCase(nombreBorrar)) {
+                empleado.usuario = "";
+                empleado.contraseña = "";
+                empleado.rol = "";
+                empleado = null;
+                System.out.println("Se ha despedido al siguiente empleado sin problemas: " + nombreBorrar);
+            }
+        }
+        
+        // GUARDAR FICHERO
+        try {
+            // A partir de aquí accederemos al fichero a guardar mediante la variable fichero
+            ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream(archivoUsers));
+
+            // Con writeObject escribimos directamente todo el array de Empleados
+            fichero.writeObject(personal);
+
+            // Cerramos el fichero
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error al guardar el fichero");
+        }
     }
     
     // Funcion comprobar que el usuario y contraseña introducidos son correctos, en caso que sean correctos se llama a un menu dependiendo del rol que sea el usuario
